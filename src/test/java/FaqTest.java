@@ -40,15 +40,15 @@ public class FaqTest {
     public void setUp(){
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-
+        driver.get("https://qa-scooter.praktikum-services.ru/");
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        FaqPage cookiePage = new FaqPage(driver);
+        cookiePage.acceptCookies();
 
     }
     @Test
     public void faqTest(){
         FaqPage faqPage = new FaqPage(driver);
-        driver.get("https://qa-scooter.praktikum-services.ru/");
-        faqPage.acceptCookies();
         faqPage.findFAQ();
         faqPage.clickQuestion(questionNumber);
         Assert.assertTrue(faqPage.isEnabledAnswer(questionNumber));

@@ -23,7 +23,6 @@ public class OrderTest {
    private final String phoneNumber;
 
 
-
     public OrderTest(String name, String secondName, String address,
                      int metroStations, String phoneNumber) {
        this.name = name;
@@ -31,6 +30,7 @@ public class OrderTest {
        this.address = address;
        this.metroStations = metroStations;
        this.phoneNumber = phoneNumber;
+
    }
     @Parameterized.Parameters // добавили аннотацию
     public static Object[][] testDataSet() {
@@ -42,9 +42,8 @@ public class OrderTest {
 
     WebDriver driver;
     @Test
-    public void orderPageTest() {
+    public void upperButtonTest() {
         FaqPage faqPage = new FaqPage(driver);
-        faqPage.acceptCookies();
         faqPage.clickUpperOrder();
         OrderPage orderPage = new OrderPage(driver);
 
@@ -70,12 +69,45 @@ public class OrderTest {
         Assert.assertTrue("Не отображается подтверждение",
                 orderPage.isAppearOrderConfirmed());
     }
+
+    @Test
+    public void lowerButtonTest() {
+        FaqPage faqPage = new FaqPage(driver);
+        faqPage.clickLowerOrder();
+        OrderPage orderPage = new OrderPage(driver);
+
+//        заполнение формы заказа
+
+        //первая страница
+        orderPage.inputName(name);
+        orderPage.inputSecondName(secondName);
+        orderPage.inputAddress(address);
+        orderPage.chooseMetroStation(metroStations);
+        orderPage.inputPhoneNumber(phoneNumber);
+        orderPage.clickNextButton();
+
+        //вторая страница
+        orderPage.setDate("02.02.2023");
+        orderPage.chooseDuration(0);
+        orderPage.chooseCheckBox(0);
+        orderPage.writeComment("Не звонить в домофон. Спит ребенок.");
+        orderPage.clickNextButton();
+
+//        проверка окна подтверждения заказа
+        orderPage.clickYesButton();
+        Assert.assertTrue("Не отображается подтверждение",
+                orderPage.isAppearOrderConfirmed());
+    }
     @Before
     public void setUp(){
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         driver.get("https://qa-scooter.praktikum-services.ru/");
+
+        FaqPage cookiePage = new FaqPage(driver);
+        cookiePage.acceptCookies();
+
     }
 
     @After
